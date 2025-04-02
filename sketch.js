@@ -47,7 +47,7 @@ function setup() {
     net = createSprite(width/2, height/1.054, width/75, height/6)
     net.shapeColor = "black"
 
-    netEdge = createSprite(width/2, height/1.162, width/75, height/100)
+    netEdge = createSprite(width/2, height/1.156, width/75, height/1000)
     netEdge.shapeColor = "black"
 
     ball = createSprite(width/2, height/2)
@@ -148,7 +148,9 @@ function draw() {
         }
 
         if(ball.collide(netEdge)){
-            ball.x = netEdge.x+10
+            ball.x = netEdge.x+100
+            ball.y = netEdge.y
+            ball.velocityX = 10
         }
 
         p.collide(edges)
