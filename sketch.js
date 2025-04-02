@@ -73,6 +73,7 @@ function draw() {
         opp.visible = true
         ball.visible = true
         net.visible = true
+        netEdge.visible = true
         invisibleWall.visible = true
 
         p.velocityY+= 0.3
@@ -168,6 +169,7 @@ function draw() {
         opp.visible = false
         ball.visible = false
         net.visible = false
+        netEdge.visible = false
         invisibleWall.visible = false
         if(winner == "p"){
             background("green")
