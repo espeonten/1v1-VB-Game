@@ -1,5 +1,5 @@
-var p, pI
-var opp, oppI
+var p, pI, pJI, pSI
+var opp, oppI, oppSI
 var net
 var ball, ballI
 var restartButton, restartBI
@@ -12,11 +12,16 @@ var lastPersonWhoHitTheBall = ""
 var gamestate = "play"
 var deciderForSpike, deciderForSpike2
 var netEdge
+var tooHard = false
 
 
 function preload() {
-    pI = loadImage("p.png")
-    oppI = loadImage("opp.png")
+    pI = loadAnimation("p.png")
+    pJI = loadAnimation("p-jump.png")
+    pSI = loadAnimation("p-swing.png")
+
+    oppI = loadAnimation("opp.png")
+    oppSI = loadAnimation("opp-surprised.png")
     
     ballI = loadImage("ball.png")
 
@@ -36,10 +41,15 @@ function setup() {
     deciderForSpike2 = createSprite(width/6, height/1.1, 1)
 
     p = createSprite(width/5, height/1.2)
-    p.addImage(pI)
+    p.addAnimation("reg", pI)
+    p.addAnimation("jump", pJI)
+    p.addAnimation("swing", pSI)
+    p.changeAnimation("reg")
 
     opp = createSprite(width/1.2, height/1.2)
-    opp.addImage(oppI)
+    opp.addAnimation("reg", oppI)
+    opp.addAnimation("surp", oppSI)
+    opp.changeAnimation("reg")
 
     invisibleWall = createSprite(width/2, height, width/50, height*10)
     invisibleWall.shapeColor = "white"
@@ -61,7 +71,7 @@ function setup() {
 
 
 function draw() {
-    console.log(pAction)
+    console.log(p.y)
     background("white")
 
     deciderForSpike.visible = false
@@ -79,7 +89,11 @@ function draw() {
         p.velocityY+= 0.3
         opp.velocityY+= 0.3
 
+        if(p.y >= 900){
+            p.changeAnimation("reg")
+        }
         if(keyDown("up") && p.collide(edges)){
+            p.changeAnimation("jump")
             p.velocityY= -10
         }
         else if(keyDown("right")){
@@ -87,6 +101,9 @@ function draw() {
         }
         else if(keyDown("left")){
             p.x-=6
+        }
+        if(keyDown("space" || keyDown("x"))){
+            p.changeAnimation("swing")
         }
 
         if(pAction == "play" && ball.x >= invisibleWall.x){
@@ -107,14 +124,20 @@ function draw() {
         }
 
         if(ball.isTouching(opp)){
-            if(ball.x >width/2 && ball.x <width/1.3){
-                ball.velocityX= -7
-                ball.velocityY= -15
+            if(tooHard == true){
+                opp.changeAnimation("surp")
+                ball.velocityX= -75
+                ball.velocityY= -50
             }
-            if(ball.x >width/1.3 && ball.x <width){
-                ball.velocityX= -15
-                ball.velocityY= -15
-            }
+            else{
+                if(ball.x >width/2 && ball.x <width/1.3){
+                    ball.velocityX= -7
+                    ball.velocityY= -15
+                }
+                if(ball.x >width/1.3 && ball.x <width){
+                    ball.velocityX= -15
+                    ball.velocityY= -15
+                }}
         }
 
         if(ball.collide(edges[0])){
@@ -164,6 +187,9 @@ function draw() {
         action(deciderForSpike, deciderForSpike2)
     }
     else if(gamestate == "end"){
+        p.changeAnimation("reg")
+        opp.changeAnimation("reg")
+        tooHard = false
         restartB.visible = true
         p.visible = false
         opp.visible = false
